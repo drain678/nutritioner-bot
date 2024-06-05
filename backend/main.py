@@ -1,9 +1,11 @@
+"""Main file for starting the server."""
+
 import os
-from lib.datasources.providers.nutrition_fake import FakeNutritionProvider
-from lib.datasources.providers import nutrition
+
 from lib import server
-from lib.database.session import NutritionRepository
 from lib.database.main_db import init_db
+from lib.database.session import NutritionRepository
+from lib.datasources.providers import nutrition
 
 ollama_url = os.getenv('BASE_OLLAMA_URL')
 ollama_model = os.getenv('OLLAMA_MODEL')
