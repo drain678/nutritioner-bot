@@ -36,7 +36,7 @@ class TestHTTPServer(TestCase):
         self.server.shutdown()
         self.thread.join()
 
-    def test_post(self):
+    def test_POST(self):
         """Test the POST request for creating a meal."""
         nutrition_info = NutritionInfo(calories=config.CAL42)
         self.provider_mock.get_nutrition = mock.MagicMock(return_value=nutrition_info)
@@ -60,7 +60,7 @@ class TestHTTPServer(TestCase):
         self.assertEqual(repo_call['calories'], nutrition_info.calories)
         self.assertEqual(repo_call['created_date'].date(), datetime.datetime.now().date())
 
-    def test_get(self):
+    def test_POST(self):
         """Test the GET request for recommendations."""
         user_id = '42'
         now = datetime.datetime.now()

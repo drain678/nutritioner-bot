@@ -30,4 +30,5 @@ def init_db():
     """
     engine = create_engine(get_db_url())
     Base.metadata.create_all(bind=engine)
-    return sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return SessionLocal

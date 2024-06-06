@@ -6,8 +6,6 @@ from datetime import date, datetime, timedelta
 
 from lib.database.models import Meal
 
-from config import ERROR
-
 
 @dataclass
 class MealData:
@@ -73,14 +71,21 @@ class NutritionRepository(BaseNutritionRepository):
             dict: A dictionary indicating the status of the operation.
         """
         session = self.session()
-        meal_data = MealData(user_id, description, calories, created_date)
         try:
-            return self._insert_meal(session, meal_data)
+            meal = Meal(
+                user_id=user_id,
+                description=description,
+                calories=calories,
+                created_date=created_date,
+            )
+            session.add(meal)
+            session.commit()
+            return {'status': 'success'}
         except Exception as err:
             session.rollback()
             return {
-                'status': ERROR,
-                ERROR: 'Database error',
+                'status': 'error',
+                'error': 'Database error',
                 'details': str(err),
             }
         finally:
@@ -98,29 +103,16 @@ class NutritionRepository(BaseNutritionRepository):
         """
         session = self.session()
         try:
-            return self._get_meals_for_last_week(session, user_id)
+            one_week_ago = datetime.now() - timedelta(days=7)
+            meals = session.query(Meal).filter(
+                Meal.user_id == user_id, Meal.created_date >= one_week_ago.date(),
+            ).all()
+            return meals
         except Exception as err:
             return {
-                'status': ERROR,
-                ERROR: 'Database error',
+                'status': 'error',
+                'error': 'Database error',
                 'details': str(err),
             }
         finally:
             session.close()
-
-    def _insert_meal(self, session, meal_data: MealData):
-        meal = Meal(
-            user_id=meal_data.user_id,
-            description=meal_data.description,
-            calories=meal_data.calories,
-            created_date=meal_data.created_date,
-        )
-        session.add(meal)
-        session.commit()
-        return {'status': 'success'}
-
-    def _get_meals_for_last_week(self, session, user_id: str):
-        one_week_ago = datetime.now() - timedelta(days=7)
-        return session.query(Meal).filter(
-            Meal.user_id == user_id, Meal.created_date >= one_week_ago.date(),
-        ).all()
