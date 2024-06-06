@@ -10,7 +10,7 @@ from lib.database.models import Meal
 from lib.server import nutrition_handler_factory
 from lib.service.interfaces.nutrition import NutritionInfo
 
-import config
+from . import config
 
 
 class TestHTTPServer(TestCase):
